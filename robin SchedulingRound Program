@@ -1,0 +1,127 @@
+#include<stdio.h>
+#include<stdlib.h>
+void SRTF_Scheduling(int *,int *,int);
+void RR_Scheduling(int *,int *,int);
+float avg_wt,avg_tt;
+int bt[10];
+void main()
+{
+int choice,p[10],st[10],brt[10];
+int i,j,n,tq,pos;
+printf("Enter the number of process:");
+scanf("%d",&n);
+printf("Enter the burst time:");
+for(i=0;i<n;i++)
+{
+printf("\nP[%d]:",i);
+scanf("%d",&bt[i]);
+p[i]=i;
+st[i]=bt[i];
+brt[i]=bt[i];
+}
+while(1)
+{
+printf("\nMENU\n1.SRTF_Scheduling\n2.RR_Scheduling\n3.EXIT\n");
+printf("Enter the choice:");
+scanf("%d",&choice);
+switch(choice)
+{
+case 1:SRTF_Scheduling(p,bt,n);
+break;
+case 2:RR_Scheduling(st,brt,n);
+break;
+case 3:exit(0);
+}
+printf("\n Average waiting time is:%f",avg_wt);
+printf("\n Average turn around time is:%f",avg_tt);
+}
+}
+void SRTF_Scheduling(int p[],int bt[],int n)
+{
+int at[10],x[10],i,j,small,count=0,time,wt[10],tat[10];
+int avg[10],tt[10],a=0,t=0;
+double end;
+printf("Enter arrival time:");
+for(i=0;i<n;i++)
+{
+scanf("%d",&at[i]);
+}
+for(i=0;i<n;i++)
+{
+x[i]=bt[i];
+avg[i]=0;
+tt[i]=0;
+}
+bt[9]=9999;
+for(time=0;count!=n;time++)
+{
+small=9;
+for(i=0;i<n;i++)
+{
+if(at[i]<=time && bt[i]<bt[small] && bt[i]>0)
+small=i;
+}
+bt[small]--;
+if(bt[small]==0)
+{
+count++;
+end=time+1;
+avg[small]=end-at[small]-x[small];
+tt[small]=end-at[small];
+t=t+tt[small];
+a=a+avg[small];
+}
+}
+printf("Process no.\tBurst time\t Arrival time\tWaiting time\t\ttt\n");
+for(i=0;i<n;i++)
+{
+printf("p%d\t\t\t%d\t\t%d\t\t%d\t\t%d\n",p[i],x[i],at[i],avg[i],tt[i]);
+}
+avg_wt=(float)a/n;
+avg_tt=(float)t/n;
+}
+void RR_Scheduling(int st[],int brt[],int n)
+{
+int wt[10],ti[10],tq=0,i,count=0,swt=0,stt=0,p[20],temp,sq=0,tt[10],q;
+printf("Enter the quantum:");
+scanf("%d",&tq);
+while(1)
+{
+for(i=0,count=0;i<n;i++)
+{
+temp=tq;
+if(st[i]==0)
+{
+count++;
+continue;
+}
+if(st[i]>tq)
+{
+st[i]=st[i]-tq;
+}
+else if(st[i]>=0)
+{
+temp=st[i];
+st[i]=0;
+}
+sq=sq+temp;
+tt[i]=sq;
+}
+if(n==count)
+break;
+}
+for(i=0;i<n;i++)
+{
+wt[i]=tt[i]-brt[i];
+swt=swt+wt[i];
+stt=stt+tt[i];
+p[i]=i+1;
+}
+avg_wt=(float)swt/n;
+avg_tt=(float)stt/n;
+printf("Process no.\tBurstTime\tWaitingTime\tTurnaroundTime\n");
+for(i=0;i<n;i++)
+{
+printf("P[%d]\t\t%d\t\t%d\t\t\t%d\n",p[i],brt[i],wt[i],tt[i]);
+}
+}
